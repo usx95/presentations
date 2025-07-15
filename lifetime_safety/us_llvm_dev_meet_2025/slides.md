@@ -24,17 +24,15 @@ hideInToc: true
 layout: cover
 ---
 
-# Intra-procedural lifetime analysis in Clang
+# Lifetime Safety in Clang
 
 
-
-Utkarsh Saxena, [usx@](https://moma.corp.google.com/person/usx)  
-C++ Static Code Safety Summit, 2025
+LLVMDev2025 Tech Talk proposal
 
 <!-- Good morning everyone. 
 
-I'm Utkarsh, 
-I work in the Clang Frontend Team in Munich.
+I'm .., 
+I work in the ...
 and today I'll be talking about our work on a new intra-procedural lifetime analysis in Clang. -->
 
 
@@ -124,14 +122,13 @@ layout: center
 
 # Why This Matters: Production Impact
 
-**GWP-ASan reports**:
+**Crash reports at Google**:
 *Temporal memory safety* issues are **3x to 8x more frequent** than *spatial safety* issues.
 
 <img src="./ratio.png">
 
 <div class="mt-4 text-sm text-gray-600 dark:text-gray-400">
   Temporal vs spatial breakdown (based on # unique crashes moving avg)
-    (go/gwp-asan-dash)
 </div>
 
 
@@ -244,9 +241,9 @@ layout: default
 
 Even with statement-local enhancements, the benefits were clear:
 
-- Surfaced **~750** UaF bugs in google3.
-- **~35% reduction** in *stack-use-after-free* findings reported by [go/chlor](go/chlor).
-- **~17% reduction** of *heap-use-after-free* in GWP-ASan.
+- Surfaced **O(100s)** UaF bugs at Google.
+- **~X% reduction** in *stack-use-after-free* findings reported by nightly sanitizer runs.
+- **~Y% reduction** of *heap-use-after-free* in ASAN on prod.
 
 
 
@@ -358,7 +355,7 @@ layout: center
 <v-clicks>
 
 * **Compiler-Integrated:** As a Clang warning.
-* **Enabled by default** in google3.
+* **Enabled by default** in google and upstream Clang.
 
 * **Incremental Rollout**: *Configurable strictness* and *Gradual typing*
 
@@ -374,7 +371,7 @@ Our goals is to implement this as a Clang warning, and not a separate tool like 
 We want to rollout this analysis incrementally. To do that, 
 - We'll support "multiple strictness modes" allowing easier adoption.
 - We'll support "gradual typing": 
-    - It should not require all of google3 to be annotated to use this analysis. 
+    - It should not require all of C++ codebases to be annotated to use this analysis. 
     - it should be "useful now" with the existing codebase and existing annotations.
 
 Importantly, we want to lay the foundation for **Rust-like lifetimes**:
@@ -850,12 +847,11 @@ layout: center
 
 
 <!-- <div class="absolute bottom-4 right-4 w-1/2 text-xs opacity-75"> -->
-  <p class="text-left mb-1 font-italic">Fun Finding from the Prototype (in google3):</p>
+  <p class="text-left mb-1 font-italic">Fun Finding from the a prototype:</p>
 ```cpp
-// video/thumbnails/video_structure/genai/sax.cc
 // [!code word:model_output]
-absl::string_view StripModelOutput(std::string model_output) {
-  absl::string_view stripped_text = absl::StripSuffix(model_output, "\\n");
+std::string_view Foo(std::string model_output) {
+  std::string_view stripped_text = absl::StripSuffix(model_output, "\\n");
   stripped_text = absl::StripSuffix(stripped_text, "\n");
   if (absl::StartsWith(stripped_text, "\"")) {
     stripped_text = absl::StripPrefix(stripped_text, "\"");
