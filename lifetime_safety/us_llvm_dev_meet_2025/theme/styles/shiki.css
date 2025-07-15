@@ -1,0 +1,53 @@
+.shiki .line {
+    --_bg-opacity: var(--bg-opacity, 1);
+    --c-red-soft: rgba(244, 63, 94, var(--_bg-opacity));
+    --c-orange-soft: rgba(255, 217, 112, var(--_bg-opacity));
+    --c-green-soft: rgba(16, 185, 129, var(--_bg-opacity));
+  
+    &:where(.error, .warning, .diff) {
+      --bg-opacity: 0.2;
+      --_bg-color: var(--bg-color, orangered);
+      position: relative;
+      display: inline-block;
+      inline-size: 100%;
+      background-color: var(--_bg-color);
+    }
+    &::after {
+      position: absolute;
+      inset-inline-end: 4px;
+      inset-block-start: 50%;
+      translate: 0 -50%;
+    }
+    &.error {
+      --bg-color: var(--c-red-soft);
+    }
+    &.warning {
+      --bg-color: var(--c-orange-soft);
+    }
+    &.diff {
+      &.remove {
+        --bg-color: var(--c-red-soft);
+        opacity: 0.7;
+        &::after {
+          content: '-';
+          color: red;
+          font-size: var(--size-0);
+        }
+      }
+      &.add {
+        --bg-color: var(--c-green-soft);
+        &::after {
+          content: '+';
+          font-size: var(--size-0);
+          color: greenyellow;
+        }
+      }
+    }
+    .highlighted-word {
+      margin-inline: 1px;
+      padding: 1px;
+      outline: 1px solid rgb(180, 165, 8);
+      border-radius: 3px;
+    }
+  }
+  
